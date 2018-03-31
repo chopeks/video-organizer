@@ -3,7 +3,7 @@
 * play videos from GUI
 * use your mobile phone as remote!
 
-[User guide and more info](/wiki)
+[User guide and more info](../../wiki)
 
 ## License: Apache 2.0
 
