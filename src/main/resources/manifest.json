@@ -1,0 +1,16 @@
+{
+  "name": "Movie viewer",
+  "short_name": "Movie viewer",
+  "start_url": "index.html",
+  "icons": [
+    {
+      "src": "assets/imgs/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "background_color": "#4e8ef7",
+  "theme_color": "#4e8ef7",
+  "orientation": "landscape",
+  "display": "fullscreen"
+}

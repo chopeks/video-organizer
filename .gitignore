@@ -1,0 +1,13 @@
+.gradle/
+.idea/
+build/
+out/
+movie-viewer-1.0.jar
+movies.sqlite
+run.bat
+run.lnk
+
+front/node_modules
+front/.sourcemaps
+front/www
+settings.*

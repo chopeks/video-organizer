@@ -1,0 +1,33 @@
+<ion-header (window:keydown)="onKey($event)">
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Actors</ion-title>
+    <ion-buttons end>
+      <button ion-button (click)="add($event)">
+        Add
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content class="graybg" style="padding-right: 50px !important;">
+  <ion-grid col-xl-10 col-sm-12>
+    <ion-row class="no-padding">
+      <ion-list class="graybg" ion-item col-xl-1-5 col-sm-3 *ngFor="let item of items">
+        <div style="position: relative; width: 100%; padding-top: 160% !important;">
+          <div style="position: absolute; top: 0; left: 0; bottom: 0; right: 0;">
+            <img [src]="item.image" alt="" style="object-fit: cover; width: 100%; height: 100%;" (click)="itemTapped($event, item)"/>
+          </div>
+        </div>
+        <p col-12 style="color: #8c8c8c">
+          <ion-badge class="badge" (click)="openDetails($event, item)">
+            <ion-icon name="hammer"></ion-icon>
+          </ion-badge>
+          {{item.name}}
+        </p>
+      </ion-list>
+    </ion-row>
+  </ion-grid>
+</ion-content>

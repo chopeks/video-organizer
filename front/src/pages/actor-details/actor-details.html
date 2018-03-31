@@ -1,0 +1,35 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>{{actor?.name != null ? "Actor details": "New actor"}}</ion-title>
+    <ion-buttons left>
+      <button ion-button (click)="save($event)">
+        save
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding class="graybg">
+  <ion-grid no-border>
+    <ion-row no-border>
+      <div class="graybg" col-3>
+        <ion-item class="graybg">
+          <ion-label color="primary" floating>Name</ion-label>
+          <ion-input style="color: white;" [(ngModel)]="actor.name"></ion-input>
+        </ion-item>
+        <button ion-button (click)="addUrl($event)">Change image url</button>
+      </div>
+
+      <ion-item class="graybg" col-3 col-sm-9 no-border>
+        <div style="position: relative; width: 100%; padding-top: 160% !important;">
+          <div style="position: absolute; top: 0; left: 0; bottom: 0; right: 0;">
+            <img [src]="actor?.image" alt="" style="object-fit: cover; width: 100%; height: 100%;"/>
+          </div>
+        </div>
+      </ion-item>
+    </ion-row>
+  </ion-grid>
+</ion-content>
