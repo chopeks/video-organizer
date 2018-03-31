@@ -34,12 +34,14 @@ export class CategoryDetailsPage {
     private alertCtrl: AlertController,
     public moviesProvider: RESTProvider
   ) {
-    let category = navParams.get('item');
-    this.category = {
-      id: category.id,
-      name: category.name,
-      image: category.image
-    };
+    if (navParams.get('item') != null) {
+      let category = navParams.get('item');
+      this.category = {
+        id: category.id,
+        name: category.name,
+        image: category.image
+      };
+    }
   }
 
   addUrl(event) {

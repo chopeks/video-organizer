@@ -44,7 +44,12 @@ object Cache {
 
   var settings: Settings
     get() = Settings(browser, moviePlayer)
-    set(value) = value.save()
+    set(value) {
+      value.also {
+        browser = it.browser
+        moviePlayer = it.moviePlayer
+      }
+    }
 }
 
 object OsCheck {
