@@ -11,3 +11,4 @@ front/node_modules
 front/.sourcemaps
 front/www
 settings.*
+*.iml
