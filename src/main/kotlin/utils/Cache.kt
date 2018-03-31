@@ -1,6 +1,6 @@
 package utils
 
-import model.Settings
+import model.SettingsPojo
 import org.apache.jdbm.DBMaker
 import utils.OsCheck.OSType.*
 import java.util.*
@@ -42,8 +42,8 @@ object Cache {
       db.commit()
     }
 
-  var settings: Settings
-    get() = Settings(browser, moviePlayer)
+  var settings: SettingsPojo
+    get() = SettingsPojo(browser, moviePlayer)
     set(value) {
       value.also {
         browser = it.browser
