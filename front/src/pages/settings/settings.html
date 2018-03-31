@@ -1,0 +1,35 @@
+<ion-header>
+
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Settings</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content class="graybg" padding>
+  <a href="https://icons8.com">Icon pack by Icons8</a>
+  <h2>Directories</h2>
+  <ion-list *ngFor="let item of directories">
+    <p>
+      <ion-badge class="remove" (click)="removeDirectory($event, item)">X</ion-badge>
+      ({{item.count}} files)
+      {{item.path}}
+    </p>
+  </ion-list>
+  <button ion-button (click)="addDirectory($event)">Add</button>
+
+  <h2>Settings</h2>
+  <ion-item class="graybg">
+    <ion-label color="primary" floating>Browser</ion-label>
+    <ion-input [(ngModel)]="settings.browser"></ion-input>
+  </ion-item>
+  <ion-item class="graybg">
+    <ion-label color="primary" floating>Video player</ion-label>
+    <ion-input [(ngModel)]="settings.moviePlayer"></ion-input>
+  </ion-item>
+  <button ion-button (click)="saveSettings($event)">Save settings</button>
+</ion-content>
