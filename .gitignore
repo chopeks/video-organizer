@@ -4,7 +4,6 @@ build/
 out/
 video-organizer.jar
 movies.sqlite
-run.bat
 run.lnk
 
 front/node_modules

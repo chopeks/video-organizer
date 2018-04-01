@@ -1,0 +1,1 @@
+java -jar video-organizer.jar
