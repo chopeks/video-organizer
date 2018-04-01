@@ -3,7 +3,7 @@
 * play videos from GUI
 * use your mobile phone as remote!
 
-[Download](releases)
+[Download](../../releases)
 
 [User guide and more info](../../wiki)
 
