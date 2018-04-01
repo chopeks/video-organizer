@@ -59,7 +59,6 @@ fun Application.module() {
 
   install(Routing) {
     static("/") {
-
       arrayOf("ionicons.eot",
         "ionicons.scss",
         "ionicons.svg",
@@ -85,6 +84,11 @@ fun Application.module() {
         "roboto-regular.woff",
         "roboto-regular.woff2"
       ).forEach { resource("assets/fonts/$it") }
+      arrayOf(
+        "add_new_landscape.svg",
+        "add_new_portrait.svg",
+        "picture.svg"
+      ).forEach { resource("assets/imgs/$it") }
 
       resource("build/0.js")
       resource("build/1.js")

@@ -1,34 +1,35 @@
 <ion-header (window:keydown)="onKey($event)">
   <ion-navbar>
-    <button ion-button menuToggle>
+    <button ion-button color="light" menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-
-    <ion-list>
-      <button ion-button clear float-left (click)="next($event, 0)">
+    <ion-buttons left>
+      <button ion-button color="secondary" (click)="next($event, 0)">
         Start
       </button>
-      <button ion-button clear float-left (click)="next($event, currentId - 10 * gridCapacity)">
+      <button ion-button color="secondary" (click)="next($event, currentId - 10 * gridCapacity)">
         -10
       </button>
-      <button ion-button clear float-left (click)="next($event, currentId - gridCapacity)">
+      <button ion-button color="secondary" (click)="next($event, currentId - gridCapacity)">
         -1
       </button>
-      <button ion-button clear float-left (click)="next($event, currentId + gridCapacity)">
+      <button ion-button color="secondary" (click)="next($event, currentId + gridCapacity)">
         +1
       </button>
-      <button ion-button clear float-left (click)="next($event, currentId + gridCapacity * 10)">
+      <button ion-button color="secondary" (click)="next($event, currentId + gridCapacity * 10)">
         +10
       </button>
+    </ion-buttons>
+    <ion-list left>
       <ion-item align-self-start col-2 float-left class="select-bg">
-        <ion-label>Artist</ion-label>
+        <ion-label>Actors</ion-label>
         <ion-select #filterArtists multiple="true">
           <ion-option value="0">None</ion-option>
           <ion-option *ngFor="let item of artists" value="{{item.id}}">{{item.name}}</ion-option>
         </ion-select>
       </ion-item>
       <ion-item align-self-start col-2 float-left class="select-bg">
-        <ion-label>Genre</ion-label>
+        <ion-label>Categories</ion-label>
         <ion-select #filterCategories multiple="true">
           <ion-option value="0">None</ion-option>
           <ion-option *ngFor="let item of categories" value="{{item.id}}">{{item.name}}</ion-option>
@@ -36,13 +37,13 @@
       </ion-item>
       <p hidden>
         <ion-item align-self-start hidden float-left>
-          <ion-label>Artist</ion-label>
+          <ion-label>Actors</ion-label>
           <ion-select #hiddenArtist multiple="true">
             <ion-option *ngFor="let item of artists" value="{{item.id}}">{{item.name}}</ion-option>
           </ion-select>
         </ion-item>
         <ion-item align-self-start hidden float-left>
-          <ion-label>Genre</ion-label>
+          <ion-label>Categories</ion-label>
           <ion-select #hiddenCategory multiple="true">
             <ion-option *ngFor="let item of categories" value="{{item.id}}">{{item.name}}</ion-option>
           </ion-select>
@@ -58,10 +59,12 @@
       <ion-item no-padding col-6 col-xl-5-col col-sm-4 ion-item class="graybg" *ngFor="let item of items">
         <div col-12 style="position: relative; width: 100%; padding-top: 56.25% !important;">
           <div style="position: absolute; top: 0; left: 0; bottom: 0; right: 0;">
-            <img [src]="item.icon" style="object-fit: cover; width: 100%; height: 100%;" (click)="itemTapped($event, item)"/>
+            <img [src]="item.icon" style="object-fit: cover; width: 100%; height: 100%;"
+                 (click)="itemTapped($event, item)"/>
           </div>
           <ion-badge class="more" (click)="openMovieMenu($event, item)">
-            <ion-icon name="md-refresh" style="padding-right: 3px !important;; padding-left: 3px !important;"></ion-icon>
+            <ion-icon name="md-refresh"
+                      style="padding-right: 3px !important;; padding-left: 3px !important;"></ion-icon>
           </ion-badge>
           <p class="duration">{{item.duration}}</p>
         </div>

@@ -4,7 +4,7 @@ import {RESTProvider} from "../../providers/rest/rest";
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 import {ActorsPage} from "../actors/actors";
 import {CategoriesPage} from "../categories/categories";
-import {debugMode, icons} from "../../app/main";
+import {debugMode} from "../../app/main";
 
 @Component({
   selector: 'page-grid',
@@ -38,32 +38,7 @@ export class GridPage {
     public moviesProvider: RESTProvider,
     private sanitizer: DomSanitizer
   ) {
-    if (navParams.get('actor') != null) {
-      this.selectedArtists.push(navParams.get('actor').id);
-    }
-    if (navParams.get('category') != null) {
-      this.selectedGenres.push(navParams.get('category').id);
-    }
-    // If we navigated to this page, we will have an item available as a nav param
-    this.currentId = navParams.get('id');
-    if (this.currentId == null) {
-      this.currentId = 0
-    }
-    moviesProvider.loadCategories()
-      .subscribe(categories => {
-        categories.forEach(it => this.categories.push({
-          id: it.id,
-          name: it.name
-        }))
-      });
-    moviesProvider.loadArtists()
-      .subscribe(artists => {
-        artists.forEach(it => this.artists.push({
-          id: it.id,
-          name: it.name
-        }));
-      });
-    this.next(null, this.currentId);
+
   }
 
   static pad(number) {
@@ -72,6 +47,37 @@ export class GridPage {
       s = "0" + s;
     }
     return s;
+  }
+
+  ionViewWillEnter() {
+    if (this.navParams.get('actor') != null) {
+      this.selectedArtists.push(this.navParams.get('actor').id);
+      this.filterArtists.setValue([this.navParams.get('actor').id])
+    }
+    if (this.navParams.get('category') != null) {
+      this.selectedGenres.push(this.navParams.get('category').id);
+      this.filterCategories.setValue([this.navParams.get('category').id])
+    }
+    // If we navigated to this page, we will have an item available as a nav param
+    this.currentId = this.navParams.get('id');
+    if (this.currentId == null) {
+      this.currentId = 0
+    }
+    this.moviesProvider.loadCategories()
+      .subscribe(categories => {
+        categories.forEach(it => this.categories.push({
+          id: it.id,
+          name: it.name
+        }))
+      });
+    this.moviesProvider.loadArtists()
+      .subscribe(artists => {
+        artists.forEach(it => this.artists.push({
+          id: it.id,
+          name: it.name
+        }));
+      });
+    this.next(null, this.currentId);
   }
 
   next(event, id) {
@@ -87,7 +93,7 @@ export class GridPage {
             movieId: it.id,
             title: it.name,
             duration: this.msToTime(it.duration),
-            icon: icons.missingImage,
+            icon: "assets/imgs/picture.svg",
             artists: [],
             categories: []
           });

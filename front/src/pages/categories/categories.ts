@@ -43,7 +43,7 @@ export class CategoriesPage {
           this.items.push({
             id: it.id,
             name: it.name,
-            image: icons.missingImage
+            image: "assets/imgs/picture.svg"
           });
           if (!debugMode) {
             this.moviesProvider.loadCategoryImage(it.id)

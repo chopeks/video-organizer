@@ -1,7 +1,7 @@
 <ion-header>
 
   <ion-navbar>
-    <button ion-button menuToggle>
+    <button ion-button color="light" menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>Settings</ion-title>
@@ -20,16 +20,16 @@
       {{item.path}}
     </p>
   </ion-list>
-  <button ion-button (click)="addDirectory($event)">Add</button>
+  <button ion-button color="light" (click)="addDirectory($event)">Add</button>
 
   <h2>Settings</h2>
   <ion-item class="graybg">
-    <ion-label color="primary" floating>Browser</ion-label>
+    <ion-label color="light" floating>Browser</ion-label>
     <ion-input [(ngModel)]="settings.browser"></ion-input>
   </ion-item>
   <ion-item class="graybg">
-    <ion-label color="primary" floating>Video player</ion-label>
+    <ion-label color="light" floating>Video player</ion-label>
     <ion-input [(ngModel)]="settings.moviePlayer"></ion-input>
   </ion-item>
-  <button ion-button (click)="saveSettings($event)">Save settings</button>
+  <button ion-button color="light" (click)="saveSettings($event)">Save settings</button>
 </ion-content>
