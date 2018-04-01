@@ -27,6 +27,10 @@ export class GridPage {
   selectedArtists: Array<any> = [];
   selectedGenres: Array<any> = [];
 
+  //pagination
+  currentPage: number
+  pageCount: number
+
   @ViewChild("hiddenArtist") hiddenArtist: Select;
   @ViewChild("hiddenCategory") hiddenCategory: Select;
   @ViewChild("filterArtists") filterArtists: Select;
@@ -88,7 +92,9 @@ export class GridPage {
     this.items = [];
     this.moviesProvider.loadMovies(this.currentId, this.gridCapacity, this.selectedGenres, this.selectedArtists)
       .subscribe(data => {
-        data.forEach(it => {
+        this.pageCount = Math.ceil(data.count / this.gridCapacity);
+        this.currentPage = Math.ceil(this.currentId / this.gridCapacity) + 1;
+        data.movies.forEach(it => {
           this.items.push({
             movieId: it.id,
             title: it.name,

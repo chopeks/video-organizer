@@ -47,7 +47,7 @@ export class RESTProvider {
     let catList = categories.map(it => it.toString());
     let artList = actors.map(it => it.toString());
 
-    return this.http.get<any[]>(this.url + "/movie/" + id + "/" + count, {
+    return this.http.get<{ count: number, movies: any[] }>(this.url + "/movie/" + id + "/" + count, {
       params: {
         category: catList.length == 0 ? null : catList.reduce((acc, value) => acc.concat(",").concat(value)),
         actor: artList.length == 0 ? null : artList.reduce((acc, value) => acc.concat(",").concat(value))
