@@ -1,0 +1,31 @@
+<ion-content class="graybg" no-scrolling style="position: relative">
+  <!-- top panel -->
+  <ion-searchbar placeholder="Filter actors" (ionInput)="filterItems($event)" #searchbar style="position: absolute; top: 0; width: 97%">
+  </ion-searchbar>
+  <!-- bottom panel -->
+  <div style="position: absolute; bottom: 0; left: 0; right: 0;">
+    <ion-grid>
+      <ion-row col-12>
+        <button ion-button color="light" col-5 style="margin-top: 10px !important; margin-left: 4% !important;" (click)="addNewItem()">
+          New
+        </button>
+        <button ion-button color="light" col-5 style="margin-top: 10px !important; margin-left: 4% !important;" (click)="save()">
+          Save
+        </button>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <!-- middle panel -->
+  <div style="position: absolute; top: 60px; bottom: 60px;left: 0; right: 0;">
+    <ion-content class="graybg" scrolling-y>
+      <ion-grid>
+        <ion-row>
+          <ion-item class="graybg" col-12 col-md-6 *ngFor="let item of items" style="color: #8c8c8c" remove-boders>
+            <ion-label>{{item.name}}</ion-label>
+            <ion-checkbox [checked]="isItemSelected(item)" (ionChange)="changeState($event, item)"></ion-checkbox>
+          </ion-item>
+        </ion-row>
+      </ion-grid>
+    </ion-content>
+  </div>
+</ion-content>

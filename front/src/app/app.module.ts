@@ -14,15 +14,15 @@ import {ActorDetailsPage} from "../pages/actor-details/actor-details";
 import {SettingsPage} from "../pages/settings/settings";
 import {CategoriesPage} from "../pages/categories/categories";
 import {CategoryDetailsPage} from "../pages/category-details/category-details";
-import {ActorDialog} from "../pages/grid/actor-dialog/actor-dialog";
+import {SelectorDialog} from "../pages/grid/selector-dialog/selector-dialog";
 
 @NgModule({
   declarations: [
     MyApp,
     GridPage,
+    SelectorDialog,
     ActorsPage,
     ActorDetailsPage,
-    ActorDialog,
     CategoriesPage,
     CategoryDetailsPage,
     SettingsPage
@@ -36,9 +36,9 @@ import {ActorDialog} from "../pages/grid/actor-dialog/actor-dialog";
   entryComponents: [
     MyApp,
     GridPage,
+    SelectorDialog,
     ActorsPage,
     ActorDetailsPage,
-    ActorDialog,
     CategoriesPage,
     CategoryDetailsPage,
     SettingsPage

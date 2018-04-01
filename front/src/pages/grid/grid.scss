@@ -74,3 +74,11 @@ page-grid {
 [no-scrolling] div {
   overflow: hidden;
 }
+
+[scrolling-y] div {
+  overflow-y: auto;
+}
+
+[remove-boders] .item-inner {
+  border: 0 !important;
+}

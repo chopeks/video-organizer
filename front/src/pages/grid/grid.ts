@@ -1,10 +1,11 @@
 import {Component, ViewChild} from '@angular/core';
-import {NavController, NavParams, Select} from 'ionic-angular';
+import {ModalController, NavController, NavParams, Select} from 'ionic-angular';
 import {RESTProvider} from "../../providers/rest/rest";
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 import {ActorsPage} from "../actors/actors";
 import {CategoriesPage} from "../categories/categories";
 import {debugMode} from "../../app/main";
+import {SelectorDialog} from "./selector-dialog/selector-dialog";
 
 @Component({
   selector: 'page-grid',
@@ -27,12 +28,12 @@ export class GridPage {
   selectedArtists: Array<any> = [];
   selectedGenres: Array<any> = [];
 
-  //pagination
-  currentPage: number
-  pageCount: number
+  interceptKey = true;
 
-  @ViewChild("hiddenArtist") hiddenArtist: Select;
-  @ViewChild("hiddenCategory") hiddenCategory: Select;
+  //pagination
+  currentPage: number;
+  pageCount: number;
+
   @ViewChild("filterArtists") filterArtists: Select;
   @ViewChild("filterCategories") filterCategories: Select;
 
@@ -40,6 +41,7 @@ export class GridPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public moviesProvider: RESTProvider,
+    public modalCtrl: ModalController,
     private sanitizer: DomSanitizer
   ) {
 
@@ -184,72 +186,74 @@ export class GridPage {
   }
 
   onKey(event) {
-    if (event.altKey == true) {
-      switch (event.code) {
-        case "Digit1":
-          this.navCtrl.setRoot(ActorsPage);
-          break;
-        case "Digit2":
-          this.navCtrl.setRoot(CategoriesPage);
-          break;
-      }
-    } else {
-      if (event.code == "ArrowRight") {
-        if (this.currentPage < this.pageCount) {
-          this.next(event, this.currentId + this.gridCapacity)
-        }
-      } else if (event.code == "ArrowLeft") {
-        if (this.currentPage > 1) {
-          this.next(event, this.currentId - this.gridCapacity)
+    if (this.interceptKey) {
+      if (event.altKey == true) {
+        switch (event.code) {
+          case "Digit1":
+            this.navCtrl.setRoot(ActorsPage);
+            break;
+          case "Digit2":
+            this.navCtrl.setRoot(CategoriesPage);
+            break;
         }
       } else {
-        if (event.code.startsWith("Digit") || event.code.startsWith("Key")) {
-          switch (event.code) {
-            case "Digit1":
-              this.itemTapped(event, this.items[0]);
-              break;
-            case "Digit2":
-              this.itemTapped(event, this.items[1]);
-              break;
-            case "Digit3":
-              this.itemTapped(event, this.items[2]);
-              break;
-            case "Digit4":
-              this.itemTapped(event, this.items[3]);
-              break;
-            case "Digit5":
-              this.itemTapped(event, this.items[4]);
-              break;
-            case "KeyQ":
-              this.itemTapped(event, this.items[5]);
-              break;
-            case "KeyW":
-              this.itemTapped(event, this.items[6]);
-              break;
-            case "KeyE":
-              this.itemTapped(event, this.items[7]);
-              break;
-            case "KeyR":
-              this.itemTapped(event, this.items[8]);
-              break;
-            case "KeyT":
-              this.itemTapped(event, this.items[9]);
-              break;
-            case "KeyA":
-              this.itemTapped(event, this.items[10]);
-              break;
-            case "KeyS":
-              this.itemTapped(event, this.items[11]);
-              break;
-            case "KeyD":
-              this.itemTapped(event, this.items[12]);
-              break;
-            case "KeyF":
-              this.itemTapped(event, this.items[13]);
-              break;
-            case "KeyG":
-              this.itemTapped(event, this.items[14]);
-              break;
+        if (event.code == "ArrowRight") {
+          if (this.currentPage < this.pageCount) {
+            this.next(event, this.currentId + this.gridCapacity)
+          }
+        } else if (event.code == "ArrowLeft") {
+          if (this.currentPage > 1) {
+            this.next(event, this.currentId - this.gridCapacity)
+          }
+        } else {
+          if (event.code.startsWith("Digit") || event.code.startsWith("Key")) {
+            switch (event.code) {
+              case "Digit1":
+                this.itemTapped(event, this.items[0]);
+                break;
+              case "Digit2":
+                this.itemTapped(event, this.items[1]);
+                break;
+              case "Digit3":
+                this.itemTapped(event, this.items[2]);
+                break;
+              case "Digit4":
+                this.itemTapped(event, this.items[3]);
+                break;
+              case "Digit5":
+                this.itemTapped(event, this.items[4]);
+                break;
+              case "KeyQ":
+                this.itemTapped(event, this.items[5]);
+                break;
+              case "KeyW":
+                this.itemTapped(event, this.items[6]);
+                break;
+              case "KeyE":
+                this.itemTapped(event, this.items[7]);
+                break;
+              case "KeyR":
+                this.itemTapped(event, this.items[8]);
+                break;
+              case "KeyT":
+                this.itemTapped(event, this.items[9]);
+                break;
+              case "KeyA":
+                this.itemTapped(event, this.items[10]);
+                break;
+              case "KeyS":
+                this.itemTapped(event, this.items[11]);
+                break;
+              case "KeyD":
+                this.itemTapped(event, this.items[12]);
+                break;
+              case "KeyF":
+                this.itemTapped(event, this.items[13]);
+                break;
+              case "KeyG":
+                this.itemTapped(event, this.items[14]);
+                break;
+            }
           }
         }
       }
@@ -257,35 +261,43 @@ export class GridPage {
   }
 
   openCategories(event, item) {
-    this.hiddenCategory.value = item.categories.map(value => value.id);
-    this.hiddenCategory.open();
-    this.hiddenCategory.registerOnChange(event => {
-      event.forEach(id => this.moviesProvider.bindCategory(item.movieId, id)
-        .subscribe(response => {
-          let movie = this.items.find(value => value.movieId == item.movieId);
-          movie.categories.push(this.categories.find(value => value.id == id));
-
-          let value = this.categories.find(it => it.id == id);
-          this.categories.splice(this.categories.indexOf(value), 1);
-          this.categories.unshift(value)
-        }))
-    })
+    let modal = this.modalCtrl.create(SelectorDialog, {
+      data: this.categories,
+      selected: item.categories.slice(),
+      type: 'categories'
+    }, {showBackdrop: true, enableBackdropDismiss: false});
+    modal.onDidDismiss(it => {
+      this.interceptKey = true;
+      it.selected.forEach(sel => {
+        this.moviesProvider.bindCategory(item.movieId, sel.id)
+          .subscribe(response => {
+            let movie = this.items.find(value => value.movieId == item.movieId);
+            movie.categories.push(this.categories.find(value => value.id == sel.id));
+          })
+      });
+    });
+    this.interceptKey = false;
+    modal.present();
   }
 
   openArtists(event, item) {
-    this.hiddenArtist.value = item.artists.map(value => value.id);
-    this.hiddenArtist.open();
-    this.hiddenArtist.registerOnChange(event => {
-      event.forEach(id => this.moviesProvider.bindArtist(item.movieId, id)
-        .subscribe(response => {
-          let movie = this.items.find(value => value.movieId == item.movieId);
-          movie.artists.push(this.artists.find(value => value.id == id));
-
-          let value = this.artists.find(it => it.id == id);
-          this.artists.splice(this.artists.indexOf(value), 1);
-          this.artists.unshift(value)
-        }))
-    })
+    let modal = this.modalCtrl.create(SelectorDialog, {
+      data: this.artists,
+      selected: item.artists.slice(),
+      type: 'actors'
+    }, {showBackdrop: true, enableBackdropDismiss: false});
+    modal.onDidDismiss(it => {
+      this.interceptKey = true;
+      it.selected.forEach(sel => {
+        this.moviesProvider.bindArtist(item.movieId, sel.id)
+          .subscribe(response => {
+            let movie = this.items.find(value => value.movieId == item.movieId);
+            movie.artists.push(this.artists.find(value => value.id == sel.id));
+          })
+      });
+    });
+    this.interceptKey = false;
+    modal.present();
   }
 
   removeCategory(event, item, category) {
