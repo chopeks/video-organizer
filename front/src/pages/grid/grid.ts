@@ -84,6 +84,56 @@ export class GridPage {
     this.next(null, this.currentId);
   }
 
+  changePage(event, pages) {
+    var newPage = this.currentPage + pages;
+    if (newPage > this.pageCount) {
+      newPage = this.pageCount
+    } else if (newPage < 1) {
+      newPage = 1
+    }
+
+    if (newPage != this.currentPage) {
+      this.currentId = (newPage - 1) * this.gridCapacity;
+      this.items = [];
+      this.moviesProvider.loadMovies(this.currentId, this.gridCapacity, this.selectedGenres, this.selectedArtists)
+        .subscribe(data => {
+          this.pageCount = Math.ceil(data.count / this.gridCapacity);
+          this.currentPage = Math.ceil(this.currentId / this.gridCapacity) + 1;
+          data.movies.forEach(it => {
+            this.items.push({
+              movieId: it.id,
+              title: it.name,
+              duration: this.msToTime(it.duration),
+              icon: "assets/imgs/picture.svg",
+              artists: [],
+              categories: []
+            });
+            if (!debugMode) {
+              this.moviesProvider.loadMovieImage(it.id)
+                .subscribe(image => {
+                  this.items.find(value => value.movieId == it.id).icon = this.sanitizer.bypassSecurityTrustUrl(image[0])
+                });
+            }
+            this.moviesProvider.loadMovieDetails(it.id)
+              .subscribe(details => {
+                let item = this.items.find(value => value.movieId == it.id);
+                item.categories = details.categories.map(id => this.categories.find(value => value.id == id));
+                item.artists = details.actors.map(id => this.artists.find(value => value.id == id));
+              })
+          });
+
+          this.filterArtists.registerOnChange(event => {
+            this.selectedArtists = event;
+            this.next(event, 0)
+          });
+          this.filterCategories.registerOnChange(event => {
+            this.selectedGenres = event;
+            this.next(event, 0)
+          });
+        })
+    }
+  }
+
   next(event, id) {
     this.currentId = id;
     if (this.currentId < 0) {
@@ -145,9 +195,13 @@ export class GridPage {
       }
     } else {
       if (event.code == "ArrowRight") {
-        this.next(event, this.currentId + this.gridCapacity)
+        if (this.currentPage < this.pageCount) {
+          this.next(event, this.currentId + this.gridCapacity)
+        }
       } else if (event.code == "ArrowLeft") {
-        this.next(event, this.currentId - this.gridCapacity)
+        if (this.currentPage > 1) {
+          this.next(event, this.currentId - this.gridCapacity)
+        }
       } else {
         if (event.code.startsWith("Digit") || event.code.startsWith("Key")) {
           switch (event.code) {

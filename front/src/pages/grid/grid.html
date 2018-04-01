@@ -7,16 +7,16 @@
       <button ion-button color="secondary" (click)="next($event, 0)">
         Start
       </button>
-      <button ion-button color="secondary" (click)="next($event, currentId - 10 * gridCapacity)">
+      <button ion-button color="secondary" (click)="changePage($event, -10)">
         -10
       </button>
-      <button ion-button color="secondary" (click)="next($event, currentId - gridCapacity)">
+      <button ion-button color="secondary" (click)="changePage($event, -1)">
         -1
       </button>
-      <button ion-button color="secondary" (click)="next($event, currentId + gridCapacity)">
+      <button ion-button color="secondary" (click)="changePage($event, 1)">
         +1
       </button>
-      <button ion-button color="secondary" (click)="next($event, currentId + gridCapacity * 10)">
+      <button ion-button color="secondary" (click)="changePage($event, 10)">
         +10
       </button>
     </ion-buttons>
@@ -57,7 +57,7 @@
 </ion-header>
 
 <ion-content class="graybg">
-  <ion-grid class="no-padding">
+  <ion-grid class="no-padding" align-to-top>
     <ion-row no-padding>
       <ion-item no-padding col-6 col-xl-5-col col-sm-4 ion-item class="graybg" *ngFor="let item of items">
         <div col-12 style="position: relative; width: 100%; padding-top: 56.25% !important;">

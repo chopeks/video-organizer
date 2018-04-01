@@ -5,7 +5,7 @@ import {RESTProvider} from "../../providers/rest/rest";
 import {ActorDetailsPage} from "../actor-details/actor-details";
 import {GridPage} from "../grid/grid";
 import {CategoriesPage} from "../categories/categories";
-import {debugMode, icons} from "../../app/main";
+import {debugMode} from "../../app/main";
 
 @Component({
   selector: 'page-actors',

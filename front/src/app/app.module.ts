@@ -14,6 +14,7 @@ import {ActorDetailsPage} from "../pages/actor-details/actor-details";
 import {SettingsPage} from "../pages/settings/settings";
 import {CategoriesPage} from "../pages/categories/categories";
 import {CategoryDetailsPage} from "../pages/category-details/category-details";
+import {ActorDialog} from "../pages/grid/actor-dialog/actor-dialog";
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import {CategoryDetailsPage} from "../pages/category-details/category-details";
     GridPage,
     ActorsPage,
     ActorDetailsPage,
+    ActorDialog,
     CategoriesPage,
     CategoryDetailsPage,
     SettingsPage
@@ -36,6 +38,7 @@ import {CategoryDetailsPage} from "../pages/category-details/category-details";
     GridPage,
     ActorsPage,
     ActorDetailsPage,
+    ActorDialog,
     CategoriesPage,
     CategoryDetailsPage,
     SettingsPage

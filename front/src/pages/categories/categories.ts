@@ -5,7 +5,7 @@ import {RESTProvider} from "../../providers/rest/rest";
 import {GridPage} from "../grid/grid";
 import {CategoryDetailsPage} from "../category-details/category-details";
 import {ActorsPage} from "../actors/actors";
-import {debugMode, icons} from "../../app/main";
+import {debugMode} from "../../app/main";
 
 /**
  * Generated class for the CategoriesPage page.
