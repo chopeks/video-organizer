@@ -267,7 +267,12 @@ fun Application.module() {
             .join(viaCategory, JoinType.LEFT, MovieTable.id, viaCategory[columnCategory])
             .select { viaActor[columnActor].isNotNull() and viaCategory[columnCategory].isNotNull() }
             .groupBy(MovieTable.id)
-            .orderBy(MovieTable.id, false)
+            .apply {
+              when (call.request.queryParameters["filter"]?.toIntOrNull()) {
+                1 -> orderBy(MovieTable.duration, false)
+                else -> orderBy(MovieTable.id, false)
+              }
+            }
             .limit(call.parameters["count"]!!.toInt(), call.parameters["from"]!!.toInt())
             .map { MoviePojo(it[MovieTable.id].value, it[MovieTable.name], it[MovieTable.duration]) },
           "count" to Join(MovieTable)
