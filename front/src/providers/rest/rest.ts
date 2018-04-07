@@ -10,9 +10,22 @@ import {Injectable} from '@angular/core';
 @Injectable()
 export class RESTProvider {
   private readonly url: string;
+  private version: string;
 
   constructor(public http: HttpClient) {
     this.url = window.location.href.split(":", 2).join(":") + ":8080"
+  }
+
+  githubTag(callback) {
+    if (this.version != null) {
+      callback(this.version)
+    } else {
+      this.http.get<{ tag_name: string }>("https://api.github.com/repos/chopeks/video-organizer/releases/latest")
+        .subscribe(it => {
+          this.version = it.tag_name
+          callback(this.version)
+        })
+    }
   }
 
   loadArtists() {

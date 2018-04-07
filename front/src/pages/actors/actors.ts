@@ -5,13 +5,14 @@ import {RESTProvider} from "../../providers/rest/rest";
 import {ActorDetailsPage} from "../actor-details/actor-details";
 import {GridPage} from "../grid/grid";
 import {CategoriesPage} from "../categories/categories";
-import {debugMode} from "../../app/main";
+import {appVersion, debugMode} from "../../app/main";
 
 @Component({
   selector: 'page-actors',
   templateUrl: 'actors.html',
 })
 export class ActorsPage {
+  hideNewVersion: boolean = true;
   items: Array<{
     id: any,
     name: string,
@@ -21,15 +22,19 @@ export class ActorsPage {
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
-    public moviesProvider: RESTProvider,
+    public rest: RESTProvider,
     private sanitizer: DomSanitizer
   ) {
-
+    this.rest.githubTag(value => {
+      if (value.valueOf() != appVersion.valueOf()) {
+        this.hideNewVersion = false
+      }
+    })
   }
 
   ionViewWillEnter() {
     this.items = [];
-    this.moviesProvider.loadArtists()
+    this.rest.loadArtists()
       .subscribe(artists => {
         artists.forEach(it => {
           this.items.push({
@@ -39,7 +44,7 @@ export class ActorsPage {
           });
           if (!debugMode) {
             setTimeout(() => {
-              this.moviesProvider.loadArtistImage(it.id)
+              this.rest.loadArtistImage(it.id)
                 .subscribe(images => {
                   this.items.find(value => value.id == it.id).image = this.sanitizer.bypassSecurityTrustUrl(images[0])
                 });
@@ -76,5 +81,9 @@ export class ActorsPage {
           break;
       }
     }
+  }
+
+  goToGithub() {
+    window.open('https://github.com/chopeks/video-organizer/releases', '_system')
   }
 }

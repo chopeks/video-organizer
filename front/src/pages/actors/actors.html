@@ -9,6 +9,9 @@
         Add new
       </button>
     </ion-buttons>
+    <ion-buttons end [hidden]="hideNewVersion">
+      <button ion-button style="color: red" (click)="goToGithub()">New version available!!</button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 

@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {AlertController, IonicPage, NavController, NavParams} from 'ionic-angular';
 import {SafeUrl} from "@angular/platform-browser";
 import {RESTProvider} from "../../providers/rest/rest";
+import {appVersion} from "../../app/main";
 
 /**
  * Generated class for the ActorDetailsPage page.
@@ -32,7 +33,7 @@ export class ActorDetailsPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     private alertCtrl: AlertController,
-    public moviesProvider: RESTProvider
+    public rest: RESTProvider
   ) {
     if (navParams.get('item') != null) {
       let actor = navParams.get('item')
@@ -73,7 +74,7 @@ export class ActorDetailsPage {
   }
 
   save(event) {
-    this.moviesProvider.saveArtist(this.actor)
+    this.rest.saveArtist(this.actor)
       .subscribe(it => {
         this.navCtrl.pop({
           updateUrl: true
