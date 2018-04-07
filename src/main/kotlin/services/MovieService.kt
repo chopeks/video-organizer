@@ -16,7 +16,7 @@ import utils.Cache
 import utils.runCommand
 import java.io.File
 
-fun Route.`movie service`() {
+fun Route.movieService() {
   get("/movie/play/{id}") {
     transaction {
       MovieTable.select { MovieTable.id eq call.parameters["id"] }.limit(1).firstOrNull().also {
