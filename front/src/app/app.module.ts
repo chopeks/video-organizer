@@ -15,12 +15,14 @@ import {SettingsPage} from "../pages/settings/settings";
 import {CategoriesPage} from "../pages/categories/categories";
 import {CategoryDetailsPage} from "../pages/category-details/category-details";
 import {SelectorDialog} from "../pages/grid/selector-dialog/selector-dialog";
+import {MoviePopover} from "../pages/grid/movie-popover/movie-popover";
 
 @NgModule({
   declarations: [
     MyApp,
     GridPage,
     SelectorDialog,
+    MoviePopover,
     ActorsPage,
     ActorDetailsPage,
     CategoriesPage,
@@ -37,6 +39,7 @@ import {SelectorDialog} from "../pages/grid/selector-dialog/selector-dialog";
     MyApp,
     GridPage,
     SelectorDialog,
+    MoviePopover,
     ActorsPage,
     ActorDetailsPage,
     CategoriesPage,

@@ -1,11 +1,12 @@
 import {Component, ViewChild} from '@angular/core';
-import {ModalController, NavController, NavParams, Select} from 'ionic-angular';
+import {ModalController, NavController, NavParams, PopoverController, Select} from 'ionic-angular';
 import {RESTProvider} from "../../providers/rest/rest";
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 import {ActorsPage} from "../actors/actors";
 import {CategoriesPage} from "../categories/categories";
 import {debugMode} from "../../app/main";
 import {SelectorDialog} from "./selector-dialog/selector-dialog";
+import {MoviePopover} from "./movie-popover/movie-popover";
 
 @Component({
   selector: 'page-grid',
@@ -44,6 +45,7 @@ export class GridPage {
     public navParams: NavParams,
     public moviesProvider: RESTProvider,
     public modalCtrl: ModalController,
+    public popoverCtrl: PopoverController,
     private sanitizer: DomSanitizer
   ) {
 
@@ -55,6 +57,16 @@ export class GridPage {
       s = "0" + s;
     }
     return s;
+  }
+
+  static msToTime(s) {
+    let ms = s % 1000;
+    s = (s - ms) / 1000;
+    let secs = s % 60;
+    s = (s - secs) / 60;
+    let mins = s % 60;
+    let hrs = (s - mins) / 60;
+    return hrs + ':' + GridPage.pad(mins) + ':' + GridPage.pad(secs);
   }
 
   ionViewWillEnter() {
@@ -114,7 +126,7 @@ export class GridPage {
           this.items.push({
             movieId: it.id,
             title: it.name,
-            duration: this.msToTime(it.duration),
+            duration: GridPage.msToTime(it.duration),
             icon: "assets/imgs/picture.svg",
             artists: [],
             categories: []
@@ -232,6 +244,7 @@ export class GridPage {
     }, {showBackdrop: true, enableBackdropDismiss: false});
     modal.onDidDismiss(it => {
       this.interceptKey = true;
+      this.categories = it.items;
       it.selected.forEach(sel => {
         this.moviesProvider.bindCategory(item.movieId, sel.id)
           .subscribe(response => {
@@ -239,6 +252,7 @@ export class GridPage {
             movie.categories.push(this.categories.find(value => value.id == sel.id));
           })
       });
+
     });
     this.interceptKey = false;
     modal.present();
@@ -252,6 +266,7 @@ export class GridPage {
     }, {showBackdrop: true, enableBackdropDismiss: false});
     modal.onDidDismiss(it => {
       this.interceptKey = true;
+      this.artists = it.items;
       it.selected.forEach(sel => {
         this.moviesProvider.bindArtist(item.movieId, sel.id)
           .subscribe(response => {
@@ -267,36 +282,31 @@ export class GridPage {
   removeCategory(event, item, category) {
     this.moviesProvider.removeCategory(item.movieId, category.id)
       .subscribe(response => {
-        console.log("wat3");
         item.categories.splice(item.categories.indexOf(category), 1)
       })
   }
 
   removeArtist(event, item, artist) {
-    console.log("wat");
     this.moviesProvider.removeArtist(item.movieId, artist.id)
       .subscribe(response => {
-        console.log("wat2");
         item.artists.splice(item.artists.indexOf(artist), 1)
       })
   }
 
   openMovieMenu(event, item) {
-    console.log(item)
-    this.moviesProvider.refreshImage(item.movieId)
-      .subscribe(image => {
-        this.items.find(value => value.movieId == item.movieId).icon = this.sanitizer.bypassSecurityTrustUrl(image[0])
-      });
-  }
-
-  msToTime(s) {
-    let ms = s % 1000;
-    s = (s - ms) / 1000;
-    let secs = s % 60;
-    s = (s - secs) / 60;
-    let mins = s % 60;
-    let hrs = (s - mins) / 60;
-    return hrs + ':' + GridPage.pad(mins) + ':' + GridPage.pad(secs);
+    let popover = this.popoverCtrl.create(MoviePopover, {
+      movie: item
+    }, {cssClass: "popover-bg"});
+    popover.onDidDismiss((data, role) => {
+      if (data != null) {
+        if (data.newImage != undefined) {
+          this.items.find(value => value.movieId == item.movieId).icon = this.sanitizer.bypassSecurityTrustUrl(data.newImage)
+        }
+      }
+    });
+    popover.present({
+      ev: event
+    });
   }
 
   onFilterChanged(changes: any) {

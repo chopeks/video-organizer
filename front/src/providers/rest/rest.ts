@@ -51,7 +51,7 @@ export class RESTProvider {
       params: {
         category: catList.length == 0 ? null : catList.reduce((acc, value) => acc.concat(",").concat(value)),
         actor: artList.length == 0 ? null : artList.reduce((acc, value) => acc.concat(",").concat(value)),
-        filter: filter
+        filter: String(filter)
       }
     })
   }

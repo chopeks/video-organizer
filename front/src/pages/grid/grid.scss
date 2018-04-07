@@ -98,3 +98,16 @@ page-grid {
 #filtersContainer ion-item > div {
   border: 0 !important;
 }
+
+.popover-bg > * {
+  overflow: hidden;
+  background: black;
+}
+
+.popover-bg > * > * > * {
+  background: #2d2d2d;
+}
+
+.popover-bg button {
+  width: 96%;
+}

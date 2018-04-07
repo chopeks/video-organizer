@@ -4,7 +4,7 @@
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-buttons left>
-      <button ion-button color="secondary" (click)="changePage($event, -100000000)">Start</button>
+      <button ion-button color="secondary" (click)="next($event, 0)">Start</button>
       <button ion-button color="secondary" (click)="changePage($event, -10)">-10</button>
       <button ion-button color="secondary" (click)="changePage($event, -1)">-1</button>
       <button ion-button color="secondary" (click)="changePage($event, 1)">+1</button>
@@ -53,7 +53,7 @@
                  (click)="itemTapped($event, item)"/>
           </div>
           <ion-badge class="more" (click)="openMovieMenu($event, item)">
-            <ion-icon name="md-refresh"
+            <ion-icon name="ios-menu"
                       style="padding-right: 3px !important;; padding-left: 3px !important;"></ion-icon>
           </ion-badge>
           <p class="duration">{{item.duration}}</p>
