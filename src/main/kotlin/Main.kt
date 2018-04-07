@@ -105,6 +105,7 @@ fun Application.module() {
     imageService()
     directoryService()
     movieService()
+    duplicatesService()
     settingsService()
 
     "${Cache.browser} http://localhost:8080".runCommand(File("./"))

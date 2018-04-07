@@ -43,7 +43,7 @@ export class GridPage {
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
-    public moviesProvider: RESTProvider,
+    public rest: RESTProvider,
     public modalCtrl: ModalController,
     public popoverCtrl: PopoverController,
     private sanitizer: DomSanitizer
@@ -83,14 +83,14 @@ export class GridPage {
     if (this.currentId == null) {
       this.currentId = 0
     }
-    this.moviesProvider.loadCategories()
+    this.rest.loadCategories()
       .subscribe(categories => {
         categories.forEach(it => this.categories.push({
           id: it.id,
           name: it.name
         }))
       });
-    this.moviesProvider.loadArtists()
+    this.rest.loadArtists()
       .subscribe(artists => {
         artists.forEach(it => this.artists.push({
           id: it.id,
@@ -118,7 +118,7 @@ export class GridPage {
       this.currentId = 0
     }
     this.items = [];
-    this.moviesProvider.loadMovies(this.currentId, this.gridCapacity, this.selectedGenres, this.selectedArtists, this.selectedFilter)
+    this.rest.loadMovies(this.currentId, this.gridCapacity, this.selectedGenres, this.selectedArtists, this.selectedFilter)
       .subscribe(data => {
         this.pageCount = Math.ceil(data.count / this.gridCapacity);
         this.currentPage = Math.ceil(this.currentId / this.gridCapacity) + 1;
@@ -132,12 +132,14 @@ export class GridPage {
             categories: []
           });
           if (!debugMode) {
-            this.moviesProvider.loadMovieImage(it.id)
-              .subscribe(image => {
-                this.items.find(value => value.movieId == it.id).icon = this.sanitizer.bypassSecurityTrustUrl(image[0])
-              });
+            setTimeout(() => {
+              this.rest.loadMovieImage(it.id)
+                .subscribe(image => {
+                  this.items.find(value => value.movieId == it.id).icon = this.sanitizer.bypassSecurityTrustUrl(image[0])
+                });
+            }, 1);
           }
-          this.moviesProvider.loadMovieDetails(it.id)
+          this.rest.loadMovieDetails(it.id)
             .subscribe(details => {
               let item = this.items.find(value => value.movieId == it.id);
               item.categories = details.categories.map(id => this.categories.find(value => value.id == id));
@@ -157,7 +159,7 @@ export class GridPage {
   }
 
   itemTapped(event, item) {
-    this.moviesProvider.playMovie(item.movieId)
+    this.rest.playMovie(item.movieId)
       .subscribe()
   }
 
@@ -246,7 +248,7 @@ export class GridPage {
       this.interceptKey = true;
       this.categories = it.items;
       it.selected.forEach(sel => {
-        this.moviesProvider.bindCategory(item.movieId, sel.id)
+        this.rest.bindCategory(item.movieId, sel.id)
           .subscribe(response => {
             let movie = this.items.find(value => value.movieId == item.movieId);
             movie.categories.push(this.categories.find(value => value.id == sel.id));
@@ -268,7 +270,7 @@ export class GridPage {
       this.interceptKey = true;
       this.artists = it.items;
       it.selected.forEach(sel => {
-        this.moviesProvider.bindArtist(item.movieId, sel.id)
+        this.rest.bindArtist(item.movieId, sel.id)
           .subscribe(response => {
             let movie = this.items.find(value => value.movieId == item.movieId);
             movie.artists.push(this.artists.find(value => value.id == sel.id));
@@ -280,14 +282,14 @@ export class GridPage {
   }
 
   removeCategory(event, item, category) {
-    this.moviesProvider.removeCategory(item.movieId, category.id)
+    this.rest.removeCategory(item.movieId, category.id)
       .subscribe(response => {
         item.categories.splice(item.categories.indexOf(category), 1)
       })
   }
 
   removeArtist(event, item, artist) {
-    this.moviesProvider.removeArtist(item.movieId, artist.id)
+    this.rest.removeArtist(item.movieId, artist.id)
       .subscribe(response => {
         item.artists.splice(item.artists.indexOf(artist), 1)
       })

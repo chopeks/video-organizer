@@ -38,10 +38,12 @@ export class ActorsPage {
             image: "assets/imgs/picture.svg"
           });
           if (!debugMode) {
-            this.moviesProvider.loadArtistImage(it.id)
-              .subscribe(images => {
-                this.items.find(value => value.id == it.id).image = this.sanitizer.bypassSecurityTrustUrl(images[0])
-              });
+            setTimeout(() => {
+              this.moviesProvider.loadArtistImage(it.id)
+                .subscribe(images => {
+                  this.items.find(value => value.id == it.id).image = this.sanitizer.bypassSecurityTrustUrl(images[0])
+                });
+            }, 1);
           }
         })
       });

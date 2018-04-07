@@ -113,6 +113,10 @@ export class RESTProvider {
     })
   }
 
+  loadDuplicates() {
+    return this.http.get<any[]>(this.url + "/duplicates")
+  }
+
   //region settings
   loadSettings() {
     return this.http.get<{ browser: string, moviePlayer: string }>(this.url + "/settings")

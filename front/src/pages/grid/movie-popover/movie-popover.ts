@@ -46,7 +46,6 @@ export class MoviePopover {
   }
 
   deleteMovie() {
-
     let alert = this.alertCtrl.create({
       title: "Do you really want to delete this file?",
       subTitle: "<B>" + this.item.title + "</B><br/> will be deleted from <b>hardrive</b>. This operation cannot be reversed.",

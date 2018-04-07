@@ -7,6 +7,7 @@ import {GridPage} from "../pages/grid/grid";
 import {ActorsPage} from "../pages/actors/actors";
 import {SettingsPage} from "../pages/settings/settings";
 import {CategoriesPage} from "../pages/categories/categories";
+import {PossibleDuplicatesPage} from "../pages/possible-duplicates/possible-duplicates";
 
 @Component({
   templateUrl: 'app.html'
@@ -26,10 +27,11 @@ export class MyApp {
       {title: 'Actors', component: ActorsPage},
       {title: 'Categories', component: CategoriesPage},
       {title: 'Movies', component: GridPage},
+      {title: 'Possible duplicates', component: PossibleDuplicatesPage},
       {title: 'Settings', component: SettingsPage}
     ];
 
-    window.scrollTo(0,1);
+    window.scrollTo(0, 1);
   }
 
   initializeApp() {

@@ -16,6 +16,7 @@ import {CategoriesPage} from "../pages/categories/categories";
 import {CategoryDetailsPage} from "../pages/category-details/category-details";
 import {SelectorDialog} from "../pages/grid/selector-dialog/selector-dialog";
 import {MoviePopover} from "../pages/grid/movie-popover/movie-popover";
+import {PossibleDuplicatesPage} from "../pages/possible-duplicates/possible-duplicates";
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import {MoviePopover} from "../pages/grid/movie-popover/movie-popover";
     ActorDetailsPage,
     CategoriesPage,
     CategoryDetailsPage,
+    PossibleDuplicatesPage,
     SettingsPage
   ],
   imports: [
@@ -44,6 +46,7 @@ import {MoviePopover} from "../pages/grid/movie-popover/movie-popover";
     ActorDetailsPage,
     CategoriesPage,
     CategoryDetailsPage,
+    PossibleDuplicatesPage,
     SettingsPage
   ],
   providers: [
