@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {NavParams, Platform, ViewController} from 'ionic-angular';
+import {AlertController, NavParams, Platform, ViewController} from 'ionic-angular';
 import {RESTProvider} from "../../../providers/rest/rest";
 import {SafeUrl} from "@angular/platform-browser";
 
@@ -8,6 +8,7 @@ import {SafeUrl} from "@angular/platform-browser";
   template: `
     <ion-buttons class="graybg">
       <button ion-button clear color="secondary" (click)="generateImage()">generate thumbnail</button>
+      <button ion-button clear color="secondary" (click)="deleteMovie()">delete movie</button>
       <!--<button ion-button clear color="secondary" (click)="openLocation()" [hidden]="windowsOnly">open location</button>-->
     </ion-buttons>
   `
@@ -28,6 +29,7 @@ export class MoviePopover {
     public navParams: NavParams,
     public viewCtrl: ViewController,
     public platform: Platform,
+    public alertCtrl: AlertController,
     public rest: RESTProvider
   ) {
     this.item = navParams.get("movie");
@@ -41,6 +43,32 @@ export class MoviePopover {
           newImage: images[0]
         });
       });
+  }
+
+  deleteMovie() {
+
+    let alert = this.alertCtrl.create({
+      title: "Do you really want to delete this file?",
+      subTitle: "<B>" + this.item.title + "</B><br/> will be deleted from <b>hardrive</b>. This operation cannot be reversed.",
+      buttons: [{
+        text: 'Cancel',
+        role: 'cancel',
+        handler: data => {
+          this.close(null)
+        }
+      }, {
+        text: 'Delete',
+        handler: data => {
+          this.rest.deleteMovie(this.item.movieId)
+            .subscribe(it => {
+              this.close({
+                deletedMovie: true
+              })
+            })
+        }
+      }]
+    });
+    alert.present();
   }
 
   openLocation() {

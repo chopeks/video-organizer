@@ -60,6 +60,11 @@ export class RESTProvider {
     return this.http.get<any>(this.url + "/movie/" + id)
   }
 
+  deleteMovie(id: number) {
+    return this.http.delete<any>(this.url + "/movie/" + id)
+  }
+
+
   loadMovieImage(id) {
     return this.http.get<any[]>(this.url + "/movie/image/" + id)
   }
@@ -68,7 +73,7 @@ export class RESTProvider {
     return this.http.get<any[]>(this.url + "/movie/images/" + id)
   }
 
-  playMovie(id) {
+  playMovie(id: number) {
     return this.http.get<any>(this.url + "/movie/play/" + id)
   }
 

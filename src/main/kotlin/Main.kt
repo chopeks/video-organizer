@@ -288,12 +288,25 @@ fun Application.module() {
     get("/movie/{id}") {
       call.respond(transaction {
         mapOf<String, Any>(
-          "categories" to MovieCategories.select { MovieCategories.movie eq call.parameters["id"] }
+          "categories" to MovieCategories.select { MovieCategories.movie eq call.parameters["id"]?.toInt() }
             .map { it[MovieCategories.category].toString() },
-          "actors" to MovieActors.select { MovieActors.movie eq call.parameters["id"] }
+          "actors" to MovieActors.select { MovieActors.movie eq call.parameters["id"]?.toInt() }
             .map { it[MovieActors.actor].toString() }
         )
       })
+    }
+    delete("/movie/{id}") {
+      call.parameters["id"]?.toIntOrNull()?.also { id ->
+        val path = transaction {
+          val ret = MovieTable.select { MovieTable.id eq id }.first()[MovieTable.path]
+          MovieTable.deleteWhere { MovieTable.id eq id }
+          MovieActors.deleteWhere { MovieActors.movie eq id }
+          MovieCategories.deleteWhere { MovieCategories.movie eq id }
+          ret
+        }
+        File(path).delete()
+        call.respond("{}")
+      }
     }
     //endregion
     //region images

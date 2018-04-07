@@ -302,6 +302,9 @@ export class GridPage {
         if (data.newImage != undefined) {
           this.items.find(value => value.movieId == item.movieId).icon = this.sanitizer.bypassSecurityTrustUrl(data.newImage)
         }
+        if (data.deletedMovie == true) {
+          this.next(null, this.currentId)
+        }
       }
     });
     popover.present({
