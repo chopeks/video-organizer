@@ -4,6 +4,8 @@ import {RESTProvider} from "../../providers/rest/rest";
 import {GridPage} from "../grid/grid";
 import {DomSanitizer} from "@angular/platform-browser";
 import {debugMode} from "../../app/main";
+import {ActorsPage} from "../actors/actors";
+import {CategoriesPage} from "../categories/categories";
 
 /**
  * Generated class for the PossibleDuplicatesPage page.
@@ -106,5 +108,21 @@ export class PossibleDuplicatesPage {
   itemTapped(event, item) {
     this.rest.playMovie(item.id)
       .subscribe()
+  }
+
+  onKey(event) {
+    if (event.altKey == true) {
+      switch (event.code) {
+        case "Digit1":
+          this.navCtrl.setRoot(ActorsPage);
+          break;
+        case "Digit2":
+          this.navCtrl.setRoot(CategoriesPage);
+          break;
+        case "Digit3":
+          this.navCtrl.setRoot(GridPage);
+          break;
+      }
+    }
   }
 }

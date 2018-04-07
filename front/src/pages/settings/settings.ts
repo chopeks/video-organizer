@@ -1,6 +1,9 @@
 import {Component} from '@angular/core';
 import {AlertController, IonicPage, NavController, NavParams} from 'ionic-angular';
 import {RESTProvider} from "../../providers/rest/rest";
+import {GridPage} from "../grid/grid";
+import {ActorsPage} from "../actors/actors";
+import {CategoriesPage} from "../categories/categories";
 
 /**
  * Generated class for the SettingsPage page.
@@ -82,5 +85,21 @@ export class SettingsPage {
 
   saveSettings(event) {
     this.restProvider.saveSettings(this.settings)
+  }
+
+  onKey(event) {
+    if (event.altKey == true) {
+      switch (event.code) {
+        case "Digit1":
+          this.navCtrl.setRoot(ActorsPage);
+          break;
+        case "Digit2":
+          this.navCtrl.setRoot(CategoriesPage);
+          break;
+        case "Digit3":
+          this.navCtrl.setRoot(GridPage);
+          break;
+      }
+    }
   }
 }

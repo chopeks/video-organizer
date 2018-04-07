@@ -1,12 +1,10 @@
-<ion-header>
-
+<ion-header (window:keydown)="onKey($event)">
   <ion-navbar>
     <button ion-button color="light" menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>Settings</ion-title>
   </ion-navbar>
-
 </ion-header>
 
 
