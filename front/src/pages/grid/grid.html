@@ -4,23 +4,24 @@
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-buttons left>
-      <button ion-button color="secondary" (click)="changePage($event, -100000000)">
-        Start
-      </button>
-      <button ion-button color="secondary" (click)="changePage($event, -10)">
-        -10
-      </button>
-      <button ion-button color="secondary" (click)="changePage($event, -1)">
-        -1
-      </button>
-      <button ion-button color="secondary" (click)="changePage($event, 1)">
-        +1
-      </button>
-      <button ion-button color="secondary" (click)="changePage($event, 10)">
-        +10
-      </button>
+      <button ion-button color="secondary" (click)="changePage($event, -100000000)">Start</button>
+      <button ion-button color="secondary" (click)="changePage($event, -10)">-10</button>
+      <button ion-button color="secondary" (click)="changePage($event, -1)">-1</button>
+      <button ion-button color="secondary" (click)="changePage($event, 1)">+1</button>
+      <button ion-button color="secondary" (click)="changePage($event, 10)">+10</button>
     </ion-buttons>
     <ion-buttons end>
+      <button ion-button color="secondary">Sort by:</button>
+      <ion-list ion-button radio-group id="filtersContainer" [(ngModel)]="selectedFilter" (ionChange)="onFilterChanged($event)">
+        <ion-item>
+          <ion-label>Date</ion-label>
+          <ion-radio color="secondary" value="0"></ion-radio>
+        </ion-item>
+        <ion-item>
+          <ion-label>Duration</ion-label>
+          <ion-radio color="secondary" value="1"></ion-radio>
+        </ion-item>
+      </ion-list>
       <button ion-button color="secondary">page {{currentPage}} of {{pageCount}}</button>
     </ion-buttons>
     <ion-list left>
@@ -38,20 +39,6 @@
           <ion-option *ngFor="let item of categories" value="{{item.id}}">{{item.name}}</ion-option>
         </ion-select>
       </ion-item>
-      <p hidden>
-        <ion-item align-self-start hidden float-left>
-          <ion-label>Actors</ion-label>
-          <ion-select #hiddenArtist multiple="true">
-            <ion-option *ngFor="let item of artists" value="{{item.id}}">{{item.name}}</ion-option>
-          </ion-select>
-        </ion-item>
-        <ion-item align-self-start hidden float-left>
-          <ion-label>Categories</ion-label>
-          <ion-select #hiddenCategory multiple="true">
-            <ion-option *ngFor="let item of categories" value="{{item.id}}">{{item.name}}</ion-option>
-          </ion-select>
-        </ion-item>
-      </p>
     </ion-list>
   </ion-navbar>
 </ion-header>

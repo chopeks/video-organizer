@@ -82,3 +82,19 @@ page-grid {
 [remove-boders] .item-inner {
   border: 0 !important;
 }
+
+#filtersContainer {
+  margin: 0 !important;
+  display: inline-flex;
+}
+
+#filtersContainer ion-item {
+  width: 120px;
+  background: black;
+  color: white;
+  border: 0 !important;
+}
+
+#filtersContainer ion-item > div {
+  border: 0 !important;
+}

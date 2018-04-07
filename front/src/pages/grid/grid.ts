@@ -27,6 +27,8 @@ export class GridPage {
   }>;
   selectedArtists: Array<any> = [];
   selectedGenres: Array<any> = [];
+  selectedFilter = 0;
+  lastSelectedFilter = 0;
 
   interceptKey = true;
 
@@ -87,52 +89,14 @@ export class GridPage {
   }
 
   changePage(event, pages) {
-    var newPage = this.currentPage + pages;
+    let newPage = this.currentPage + pages;
     if (newPage > this.pageCount) {
       newPage = this.pageCount
     } else if (newPage < 1) {
       newPage = 1
     }
-
     if (newPage != this.currentPage) {
-      this.currentId = (newPage - 1) * this.gridCapacity;
-      this.items = [];
-      this.moviesProvider.loadMovies(this.currentId, this.gridCapacity, this.selectedGenres, this.selectedArtists)
-        .subscribe(data => {
-          this.pageCount = Math.ceil(data.count / this.gridCapacity);
-          this.currentPage = Math.ceil(this.currentId / this.gridCapacity) + 1;
-          data.movies.forEach(it => {
-            this.items.push({
-              movieId: it.id,
-              title: it.name,
-              duration: this.msToTime(it.duration),
-              icon: "assets/imgs/picture.svg",
-              artists: [],
-              categories: []
-            });
-            if (!debugMode) {
-              this.moviesProvider.loadMovieImage(it.id)
-                .subscribe(image => {
-                  this.items.find(value => value.movieId == it.id).icon = this.sanitizer.bypassSecurityTrustUrl(image[0])
-                });
-            }
-            this.moviesProvider.loadMovieDetails(it.id)
-              .subscribe(details => {
-                let item = this.items.find(value => value.movieId == it.id);
-                item.categories = details.categories.map(id => this.categories.find(value => value.id == id));
-                item.artists = details.actors.map(id => this.artists.find(value => value.id == id));
-              })
-          });
-
-          this.filterArtists.registerOnChange(event => {
-            this.selectedArtists = event;
-            this.next(event, 0)
-          });
-          this.filterCategories.registerOnChange(event => {
-            this.selectedGenres = event;
-            this.next(event, 0)
-          });
-        })
+      this.next(event, (newPage - 1) * this.gridCapacity)
     }
   }
 
@@ -142,7 +106,7 @@ export class GridPage {
       this.currentId = 0
     }
     this.items = [];
-    this.moviesProvider.loadMovies(this.currentId, this.gridCapacity, this.selectedGenres, this.selectedArtists)
+    this.moviesProvider.loadMovies(this.currentId, this.gridCapacity, this.selectedGenres, this.selectedArtists, this.selectedFilter)
       .subscribe(data => {
         this.pageCount = Math.ceil(data.count / this.gridCapacity);
         this.currentPage = Math.ceil(this.currentId / this.gridCapacity) + 1;
@@ -333,5 +297,12 @@ export class GridPage {
     let mins = s % 60;
     let hrs = (s - mins) / 60;
     return hrs + ':' + GridPage.pad(mins) + ':' + GridPage.pad(secs);
+  }
+
+  onFilterChanged(changes: any) {
+    if (this.lastSelectedFilter != this.selectedFilter) {
+      this.lastSelectedFilter = this.selectedFilter;
+      this.next(null, 0);
+    }
   }
 }

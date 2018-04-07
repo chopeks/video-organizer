@@ -293,12 +293,10 @@ fun Application.module() {
     //endregion
     //region images
     get("/category/image/{id}") {
-      call.respond(transaction { arrayOf(Category.findById(call.parameters["id"]!!.toInt())?.image) }
-        ?: HttpStatusCode.NotFound)
+      call.respond(transaction { arrayOf(Category.findById(call.parameters["id"]!!.toInt())?.image) })
     }
     get("/actor/image/{id}") {
-      call.respond(transaction { arrayOf(Actor.findById(call.parameters["id"]!!.toInt())?.image) }
-        ?: HttpStatusCode.NotFound)
+      call.respond(transaction { arrayOf(Actor.findById(call.parameters["id"]!!.toInt())?.image) })
     }
     get("/movie/image/{id}") {
       val image = transaction {
