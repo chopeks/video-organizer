@@ -20,7 +20,7 @@ export class RESTProvider {
   }
 
   loadArtistImage(id) {
-    return this.http.get<any[]>(this.url + "//actor/image/" + id)
+    return this.http.get<any[]>(this.url + "/image/actor/" + id)
   }
 
   saveArtist(artist) {
@@ -34,7 +34,7 @@ export class RESTProvider {
   }
 
   loadCategoryImage(id) {
-    return this.http.get<any[]>(this.url + "/category/image/" + id)
+    return this.http.get<any[]>(this.url + "/image/category/" + id)
   }
 
   saveCategory(category) {
@@ -66,11 +66,11 @@ export class RESTProvider {
 
 
   loadMovieImage(id) {
-    return this.http.get<any[]>(this.url + "/movie/image/" + id)
+    return this.http.get<any[]>(this.url + "/image/movie/" + id)
   }
 
   loadMovieImages(id) {
-    return this.http.get<any[]>(this.url + "/movie/images/" + id)
+    return this.http.get<any[]>(this.url + "/images/movie/" + id)
   }
 
   playMovie(id: number) {
@@ -86,15 +86,15 @@ export class RESTProvider {
   }
 
   removeArtist(movie, artist) {
-    return this.http.get<any>(this.url + "/delete/actors/" + artist + "/" + movie)
+    return this.http.delete<any>(this.url + "/actors/" + artist + "/" + movie)
   }
 
   removeCategory(movie, category) {
-    return this.http.get<any>(this.url + "/delete/categories/" + category + "/" + movie)
+    return this.http.delete<any>(this.url + "/categories/" + category + "/" + movie)
   }
 
   refreshImage(movie) {
-    return this.http.get<any[]>(this.url + "/movie/image/" + movie + "?refresh=true")
+    return this.http.get<any[]>(this.url + "/image/movie/" + movie + "?refresh=true")
   }
 
   loadDirectories() {

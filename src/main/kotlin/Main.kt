@@ -1,6 +1,4 @@
 import db.*
-import db.MovieTable.thumbnail
-import db.PathsTable.count
 import db.PathsTable.path
 import db.SchemaVerionsTable.version
 import io.ktor.application.Application
@@ -13,29 +11,23 @@ import io.ktor.features.CORS
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.gson
 import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
-import io.ktor.request.receiveOrNull
-import io.ktor.response.respond
 import io.ktor.response.respondRedirect
 import io.ktor.routing.Routing
-import io.ktor.routing.delete
 import io.ktor.routing.get
-import io.ktor.routing.post
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import model.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
-import utils.*
+import services.*
+import utils.Cache
+import utils.RefreshUtils
+import utils.runCommand
 import java.io.File
 import java.sql.Connection
 import java.text.DateFormat
 import java.time.Duration
-import java.util.*
 import java.util.Random
-import javax.imageio.ImageIO
-import kotlin.concurrent.thread
 
 
 fun Application.module() {
@@ -107,305 +99,12 @@ fun Application.module() {
     get("/") {
       call.respondRedirect("/index.html", true)
     }
-    // option lists
-    get("/categories") { call.respond(transaction { Category.all().sortedBy { it.name }.map { it.pojo } }) }
-    get("/actors") { call.respond(transaction { Actor.all().sortedBy { it.name }.map { it.pojo } }) }
-    post("/categories/{category}/{movie}") {
-      val row = transaction {
-        MovieCategories.select { (MovieCategories.movie eq call.parameters["movie"]) and (MovieCategories.category eq call.parameters["category"]) }
-          .firstOrNull()
-      }
-      if (row != null) {
-        call.respond(HttpStatusCode.Conflict)
-      } else {
-        transaction {
-          MovieCategories.insert {
-            it[movie] = call.parameters["movie"]!!.toInt()
-            it[category] = call.parameters["category"]!!.toInt()
-          }
-        }
-        call.respond("{}")
-      }
-    }
-    get("/delete/categories/{category}/{movie}") {
-      transaction {
-        MovieCategories.deleteWhere { (MovieCategories.movie eq call.parameters["movie"]) and (MovieCategories.category eq call.parameters["category"]) }
-      }
-      call.respond("{}")
-    }
-    post("/actors/{actor}/{movie}") {
-      val row = transaction {
-        MovieActors.select { (MovieActors.movie eq call.parameters["movie"]) and (MovieActors.actor eq call.parameters["actor"]) }
-          .firstOrNull()
-      }
-      if (row != null) {
-        call.respond(HttpStatusCode.Conflict)
-      } else {
-        transaction {
-          MovieActors.insert {
-            it[movie] = call.parameters["movie"]!!.toInt()
-            it[actor] = call.parameters["actor"]!!.toInt()
-          }
-        }
-        call.respond("{}")
-      }
-    }
-    get("/delete/actors/{actor}/{movie}") {
-      transaction {
-        MovieActors.deleteWhere { (MovieActors.movie eq call.parameters["movie"]) and (MovieActors.actor eq call.parameters["actor"]) }
-      }
-      call.respond("{}")
-    }
-    //region categories crud
-    post("/category") {
-      call.receiveOrNull<CategoryPojo>()?.let {
-        call.respond(HttpStatusCode.OK, transaction {
-          if (Category.find { CategoryTable.id eq it.id }.firstOrNull() != null) {
-            CategoryTable.update({ CategoryTable.id eq it.id }) { obj ->
-              obj[name] = it.name
-              obj[image] = it.image
-            }
-          } else {
-            CategoryTable.insert { new ->
-              new[name] = it.name
-              new[image] = it.image
-            }
-          }
-          "{}"
-        })
-      }
-    }
-    delete("/category/{id}") {
-      transaction { CategoryTable.deleteWhere { CategoryTable.id eq call.parameters["id"] } }
-      call.respond(HttpStatusCode.OK)
-    }
-    //endregion
-    //region actor crud
-    get("/actor/{id}") {
-      call.respond(transaction { ActorTable.select { ActorTable.id eq call.parameters["id"] } }.firstOrNull()
-        ?: HttpStatusCode.NotFound)
-    }
-    post("/actor") {
-      call.receiveOrNull<ActorPojo>()?.let {
-        if (it.image?.startsWith("http") == true) {
-          it.image = it.image?.urlImageToBase64()
-        }
-        call.respond(HttpStatusCode.OK, transaction {
-          if (Actor.find { ActorTable.id eq it.id }.firstOrNull() != null) {
-            ActorTable.update({ ActorTable.id eq it.id }) { obj ->
-              obj[name] = it.name
-              obj[image] = it.image
-            }
-          } else {
-            ActorTable.insert { new ->
-              new[name] = it.name
-              new[image] = it.image
-            }
-          }
-          "{}"
-        })
-      }
-    }
-    delete("/actor/{id}") {
-      transaction { ActorTable.deleteWhere { ActorTable.id eq call.parameters["id"] } }
-      call.respond(HttpStatusCode.OK)
-    }
-    //endregion
-    //region movie
-    get("/movie/play/{id}") {
-      transaction {
-        MovieTable.select { MovieTable.id eq call.parameters["id"] }.limit(1).firstOrNull().also {
-          if (it != null) {
-            "${Cache.moviePlayer} \"${it[MovieTable.path]}\"".runCommand(File(it[MovieTable.path]).parentFile)
-          }
-        }
-      }
-      call.respond(HttpStatusCode.OK)
-    }
-    get("/movie/{from}/{count}") {
-      call.respond(transaction {
-        val categories = call.request.queryParameters["category"]
-        val actors = call.request.queryParameters["actor"]
 
-        var columnCategory: Column<*> = MovieTable.id
-        val viaCategory = when (categories) {
-          null, "null" -> MovieTable.slice(MovieTable.id).selectAll()
-          "0" -> MovieTable
-            .join(MovieCategories, JoinType.LEFT, MovieTable.id, MovieCategories.movie)
-            .slice(MovieTable.id)
-            .select { MovieCategories.category.isNull() }
-          else -> categories.split(",").let {
-            columnCategory = MovieCategories.movie
-            MovieCategories
-              .slice(MovieCategories.movie)
-              .select { MovieCategories.category inList it }
-              .groupBy(MovieCategories.movie)
-              .having { MovieCategories.movie.count() eq it.size }
-          }
-        }.alias("q1")
-
-        var columnActor: Column<*> = MovieTable.id
-        val viaActor = when (actors) {
-          null, "null" -> MovieTable.slice(MovieTable.id).selectAll()
-          "0" -> MovieTable
-            .join(MovieActors, JoinType.LEFT, MovieTable.id, MovieActors.movie)
-            .slice(MovieTable.id)
-            .select { MovieActors.actor.isNull() }
-          else -> actors.split(",").let {
-            columnActor = MovieActors.movie
-            MovieActors
-              .slice(MovieActors.movie)
-              .select { MovieActors.actor inList it }
-              .groupBy(MovieActors.movie)
-              .having { MovieActors.movie.count() eq it.size }
-          }
-        }.alias("q2")
-
-        mapOf(
-          "movies" to Join(MovieTable)
-            .join(viaActor, JoinType.LEFT, MovieTable.id, viaActor[columnActor])
-            .join(viaCategory, JoinType.LEFT, MovieTable.id, viaCategory[columnCategory])
-            .select { viaActor[columnActor].isNotNull() and viaCategory[columnCategory].isNotNull() }
-            .groupBy(MovieTable.id)
-            .apply {
-              when (call.request.queryParameters["filter"]?.toIntOrNull()) {
-                1 -> orderBy(MovieTable.duration, false)
-                else -> orderBy(MovieTable.id, false)
-              }
-            }
-            .limit(call.parameters["count"]!!.toInt(), call.parameters["from"]!!.toInt())
-            .map { MoviePojo(it[MovieTable.id].value, it[MovieTable.name], it[MovieTable.duration]) },
-          "count" to Join(MovieTable)
-            .join(viaActor, JoinType.LEFT, MovieTable.id, viaActor[columnActor])
-            .join(viaCategory, JoinType.LEFT, MovieTable.id, viaCategory[columnCategory])
-            .select { viaActor[columnActor].isNotNull() and viaCategory[columnCategory].isNotNull() }
-            .groupBy(MovieTable.id)
-            .orderBy(MovieTable.id, false)
-            .count()
-        )
-      })
-    }
-    get("/movie/{id}") {
-      call.respond(transaction {
-        mapOf<String, Any>(
-          "categories" to MovieCategories.select { MovieCategories.movie eq call.parameters["id"]?.toInt() }
-            .map { it[MovieCategories.category].toString() },
-          "actors" to MovieActors.select { MovieActors.movie eq call.parameters["id"]?.toInt() }
-            .map { it[MovieActors.actor].toString() }
-        )
-      })
-    }
-    delete("/movie/{id}") {
-      call.parameters["id"]?.toIntOrNull()?.also { id ->
-        val path = transaction {
-          val ret = MovieTable.select { MovieTable.id eq id }.first()[MovieTable.path]
-          MovieTable.deleteWhere { MovieTable.id eq id }
-          MovieActors.deleteWhere { MovieActors.movie eq id }
-          MovieCategories.deleteWhere { MovieCategories.movie eq id }
-          ret
-        }
-        File(path).delete()
-        call.respond("{}")
-      }
-    }
-    //endregion
-    //region images
-    get("/category/image/{id}") {
-      call.respond(transaction { arrayOf(Category.findById(call.parameters["id"]!!.toInt())?.image) })
-    }
-    get("/actor/image/{id}") {
-      call.respond(transaction { arrayOf(Actor.findById(call.parameters["id"]!!.toInt())?.image) })
-    }
-    get("/movie/image/{id}") {
-      val image = transaction {
-        MovieTable.select { MovieTable.id eq call.parameters["id"] }.firstOrNull().also {
-          if (it != null) {
-            if (it[thumbnail] != null && call.request.queryParameters["refresh"] != "true") {
-              return@transaction it[thumbnail]
-            } else {
-              val tempDir = File(UUID.randomUUID().toString().substring(0..7)).apply { mkdirs() }
-              val images = mutableListOf<String>()
-              makeScreenshot(tempDir, File(it[MovieTable.path]), (1..999).random().toLong()).also { img ->
-                ImageIO.read(img.readBytes().inputStream())
-                  .normalizeImage()
-                  .let { ImageIO.write(it, "jpg", img) }
-                transaction {
-                  MovieTable.update({ MovieTable.id eq call.parameters["id"] }, body = {
-                    it[thumbnail] = "data:image/jpg;base64," + String(Base64.getMimeEncoder().encode(img.readBytes()))
-                  })
-                }
-                images.add("data:image/jpg;base64," + String(Base64.getMimeEncoder().encode(img.readBytes())))
-                img.delete()
-              }
-              tempDir.delete()
-              return@transaction images[0]
-            }
-          }
-        }
-      }
-      call.respond(arrayOf(image))
-    }
-    get("/movie/images/{id}") {
-      val images = transaction {
-        MovieTable.select { MovieTable.id eq call.parameters["id"] }.firstOrNull().also {
-          if (it != null) {
-            val tempDir = File(UUID.randomUUID().toString().substring(0..7)).apply { mkdirs() }
-            val images = mutableListOf<String>()
-            makeScreenshots(tempDir, File(it[MovieTable.path])).forEach {
-              images.add("data:image/jpg;base64," + String(Base64.getMimeEncoder().encode(it.readBytes())))
-              it.delete()
-            }
-            tempDir.delete()
-            return@transaction images
-          }
-        }
-      }
-      call.respond(images ?: HttpStatusCode.NotFound)
-    }
-    //endregion
-
-    //region directories
-    get("/directories") {
-      call.respond(transaction {
-        PathsTable.selectAll().map { PathPojo(it[path], it[count]) }
-      })
-    }
-    post("/directory") {
-      call.receiveOrNull<PathPojo>()?.let { json ->
-        transaction {
-          try {
-            PathsTable.insert {
-              it[path] = json.path
-              it[count] = getFiles(File(json.path)).size
-            }
-          } catch (e: Throwable) {
-          }
-        }
-        call.respond("{}")
-      }
-      thread { RefreshUtils.refresh() }
-    }
-    post("/directory/remove") {
-      call.receiveOrNull<PathPojo>()?.let { json ->
-        transaction {
-          PathsTable.deleteWhere { PathsTable.path eq json.path }
-          MovieTable.deleteWhere { MovieTable.path like "${json.path}%" }
-        }
-      }
-      call.respond("{}")
-    }
-    //endregion
-    //region settings
-    get("/settings") {
-      call.respond(HttpStatusCode.OK, Cache.settings)
-    }
-    post("/settings") {
-      call.receiveOrNull<SettingsPojo>()?.let {
-        Cache.settings = it
-      }
-      call.respond(HttpStatusCode.OK, Cache.settings)
-    }
-    //endregion
+    actorService()
+    categoryService()
+    imageService()
+    directoryService()
+    settingsService()
 
     "${Cache.browser} http://localhost:8080".runCommand(File("./"))
 //    thread {
