@@ -243,7 +243,7 @@ export class GridPage {
       data: this.categories,
       selected: item.categories.slice(),
       type: 'categories'
-    }, {showBackdrop: true, enableBackdropDismiss: false});
+    }, {showBackdrop: true, enableBackdropDismiss: false, cssClass: "big-modal"});
     modal.onDidDismiss(it => {
       this.interceptKey = true;
       this.categories = it.items;
@@ -265,7 +265,7 @@ export class GridPage {
       data: this.artists,
       selected: item.artists.slice(),
       type: 'actors'
-    }, {showBackdrop: true, enableBackdropDismiss: false});
+    }, {showBackdrop: true, enableBackdropDismiss: false, cssClass: "big-modal"});
     modal.onDidDismiss(it => {
       this.interceptKey = true;
       this.artists = it.items;
