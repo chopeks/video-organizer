@@ -49,7 +49,7 @@ fun Route.actorService() {
   }
   delete("/actor/{id}") {
     transaction { ActorTable.deleteWhere { ActorTable.id eq call.parameters["id"] } }
-    call.respond(HttpStatusCode.OK)
+    call.respond(HttpStatusCode.OK, "{}")
   }
   //endregion
 

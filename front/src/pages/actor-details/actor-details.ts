@@ -2,7 +2,6 @@ import {Component} from '@angular/core';
 import {AlertController, IonicPage, NavController, NavParams} from 'ionic-angular';
 import {SafeUrl} from "@angular/platform-browser";
 import {RESTProvider} from "../../providers/rest/rest";
-import {appVersion} from "../../app/main";
 
 /**
  * Generated class for the ActorDetailsPage page.
@@ -24,7 +23,7 @@ export class ActorDetailsPage {
     name: string,
     image: SafeUrl,
   } = {
-    id: null,
+    id: -1,
     name: null,
     image: null
   };
@@ -36,7 +35,7 @@ export class ActorDetailsPage {
     public rest: RESTProvider
   ) {
     if (navParams.get('item') != null) {
-      let actor = navParams.get('item')
+      let actor = navParams.get('item');
       this.actor = {
         id: actor.id,
         name: actor.name,
@@ -75,6 +74,15 @@ export class ActorDetailsPage {
 
   save(event) {
     this.rest.saveArtist(this.actor)
+      .subscribe(it => {
+        this.navCtrl.pop({
+          updateUrl: true
+        })
+      })
+  }
+
+  delete(event) {
+    this.rest.deleteArtist(this.actor.id)
       .subscribe(it => {
         this.navCtrl.pop({
           updateUrl: true

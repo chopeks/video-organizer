@@ -2,8 +2,11 @@
   <ion-navbar>
     <ion-title>{{actor?.name != null ? "Actor details": "New actor"}}</ion-title>
     <ion-buttons left>
-      <button ion-button (click)="save($event)">
+      <button ion-button color="secondary" (click)="save($event)">
         save
+      </button>
+      <button ion-button color="secondary" (click)="delete($event)" [hidden]="actor.id < 0">
+        delete
       </button>
     </ion-buttons>
   </ion-navbar>

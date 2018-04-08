@@ -3,8 +3,11 @@
   <ion-navbar>
     <ion-title>{{category?.name != null ? "Category details": "New category"}}</ion-title>
     <ion-buttons left>
-      <button ion-button (click)="save($event)">
+      <button ion-button color="secondary" (click)="save($event)">
         save
+      </button>
+      <button ion-button color="secondary" (click)="delete($event)" [hidden]="category.id < 0">
+        delete
       </button>
     </ion-buttons>
   </ion-navbar>

@@ -36,6 +36,7 @@ export class ActorsPage {
     this.items = [];
     this.rest.loadArtists()
       .subscribe(artists => {
+        artists.sort((lhs, rhs) => lhs.name.toLowerCase().localeCompare(rhs.name.toLowerCase()));
         artists.forEach(it => {
           this.items.push({
             id: it.id,

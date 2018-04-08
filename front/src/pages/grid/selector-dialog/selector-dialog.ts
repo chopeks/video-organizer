@@ -67,7 +67,7 @@ export class SelectorDialog {
 
   save() {
     this.viewCtrl.dismiss({
-      items: this.items,
+      items: this.allItems,
       selected: this.selected
     });
   }

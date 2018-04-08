@@ -14,6 +14,7 @@ import model.Category
 import model.CategoryPojo
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import utils.urlImageToBase64
 
 fun Route.categoryService() {
   get("/categories") { call.respond(transaction { Category.all().sortedBy { it.name }.map { it.pojo } }) }
@@ -22,6 +23,9 @@ fun Route.categoryService() {
   post("/category") {
     call.receiveOrNull<CategoryPojo>()?.let {
       call.respond(HttpStatusCode.OK, transaction {
+        if (it.image?.startsWith("http") == true) {
+          it.image = it.image?.urlImageToBase64()
+        }
         if (Category.find { CategoryTable.id eq it.id }.firstOrNull() != null) {
           CategoryTable.update({ CategoryTable.id eq it.id }) { obj ->
             obj[CategoryTable.name] = it.name
@@ -39,7 +43,7 @@ fun Route.categoryService() {
   }
   delete("/category/{id}") {
     transaction { CategoryTable.deleteWhere { CategoryTable.id eq call.parameters["id"] } }
-    call.respond(HttpStatusCode.OK)
+    call.respond(HttpStatusCode.OK, "{}")
   }
   //endregion
 

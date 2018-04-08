@@ -23,7 +23,7 @@ export class CategoryDetailsPage {
     name: string,
     image: SafeUrl,
   } = {
-    id: null,
+    id: -1,
     name: null,
     image: null
   };
@@ -32,7 +32,7 @@ export class CategoryDetailsPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     private alertCtrl: AlertController,
-    public moviesProvider: RESTProvider
+    public rest: RESTProvider
   ) {
     if (navParams.get('item') != null) {
       let category = navParams.get('item');
@@ -72,7 +72,16 @@ export class CategoryDetailsPage {
   }
 
   save(event) {
-    this.moviesProvider.saveCategory(this.category)
+    this.rest.saveCategory(this.category)
+      .subscribe(it => {
+        this.navCtrl.pop({
+          updateUrl: true
+        })
+      })
+  }
+
+  delete(event) {
+    this.rest.deleteCategory(this.category.id)
       .subscribe(it => {
         this.navCtrl.pop({
           updateUrl: true

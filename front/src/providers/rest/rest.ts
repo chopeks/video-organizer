@@ -42,12 +42,20 @@ export class RESTProvider {
     })
   }
 
+  deleteArtist(id: number) {
+    return this.http.delete<any[]>(this.url + "/actor/" + id)
+  }
+
   loadCategories() {
     return this.http.get<any[]>(this.url + "/categories")
   }
 
   loadCategoryImage(id) {
     return this.http.get<any[]>(this.url + "/image/category/" + id)
+  }
+
+  deleteCategory(id: number) {
+    return this.http.delete<any[]>(this.url + "/category/" + id)
   }
 
   saveCategory(category) {
