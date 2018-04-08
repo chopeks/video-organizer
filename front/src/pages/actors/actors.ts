@@ -1,5 +1,5 @@
-import {Component} from '@angular/core';
-import {NavController, NavParams} from 'ionic-angular';
+import {Component, ViewChild} from '@angular/core';
+import {NavController, NavParams, Searchbar} from 'ionic-angular';
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 import {RESTProvider} from "../../providers/rest/rest";
 import {ActorDetailsPage} from "../actor-details/actor-details";
@@ -13,11 +13,11 @@ import {appVersion, debugMode} from "../../app/main";
 })
 export class ActorsPage {
   hideNewVersion: boolean = true;
-  items: Array<{
-    id: any,
-    name: string,
-    image: SafeUrl,
-  }> = [];
+  allItems: Array<{ id: any, name: string, image: SafeUrl }> = [];
+  items: Array<{ id: any, name: string, image: SafeUrl }> = [];
+
+  @ViewChild('navSearchbar') searchbar: Searchbar;
+
 
   constructor(
     public navCtrl: NavController,
@@ -38,7 +38,7 @@ export class ActorsPage {
       .subscribe(artists => {
         artists.sort((lhs, rhs) => lhs.name.toLowerCase().localeCompare(rhs.name.toLowerCase()));
         artists.forEach(it => {
-          this.items.push({
+          this.allItems.push({
             id: it.id,
             name: it.name,
             image: "assets/imgs/picture.svg"
@@ -51,8 +51,15 @@ export class ActorsPage {
                 });
             }, 1);
           }
+          this.filterItems({target: {value: ""}})
         })
       });
+  }
+
+  filterItems(event) {
+    this.items = this.allItems.filter(it => {
+      return it.name.toLowerCase().includes(event.target.value.toLowerCase())
+    });
   }
 
   openDetails(event, item) {

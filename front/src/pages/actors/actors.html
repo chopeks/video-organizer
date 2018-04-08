@@ -9,8 +9,9 @@
         Add new
       </button>
     </ion-buttons>
-    <ion-buttons end [hidden]="hideNewVersion">
-      <button ion-button style="color: red" (click)="goToGithub()">New version available!!</button>
+    <ion-buttons end>
+      <ion-searchbar placeholder="Filter actors" (ionInput)="filterItems($event)" #navSearchbar nav-searchbar></ion-searchbar>
+      <button ion-button style="color: red" (click)="goToGithub()" [hidden]="hideNewVersion">New version available!!</button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>

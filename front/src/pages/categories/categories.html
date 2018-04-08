@@ -9,6 +9,9 @@
         Add new
       </button>
     </ion-buttons>
+    <ion-buttons end>
+      <ion-searchbar placeholder="Filter categories" (ionInput)="filterItems($event)" #navSearchbar nav-searchbar></ion-searchbar>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
