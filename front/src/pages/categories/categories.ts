@@ -37,6 +37,7 @@ export class CategoriesPage {
     this.items = [];
     this.moviesProvider.loadCategories()
       .subscribe(categories => {
+        categories.sort((lhs, rhs) => lhs.name.toLowerCase().localeCompare(rhs.name.toLowerCase()));
         categories.forEach(it => {
           this.allItems.push({
             id: it.id,
