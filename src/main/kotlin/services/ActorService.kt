@@ -48,7 +48,10 @@ fun Route.actorService() {
     }
   }
   delete("/actor/{id}") {
-    transaction { ActorTable.deleteWhere { ActorTable.id eq call.parameters["id"] } }
+    transaction {
+      ActorTable.deleteWhere { ActorTable.id eq call.parameters["id"] }
+      MovieActors.deleteWhere { MovieActors.actor eq call.parameters["id"] }
+    }
     call.respond(HttpStatusCode.OK, "{}")
   }
   //endregion

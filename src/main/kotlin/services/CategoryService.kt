@@ -42,7 +42,10 @@ fun Route.categoryService() {
     }
   }
   delete("/category/{id}") {
-    transaction { CategoryTable.deleteWhere { CategoryTable.id eq call.parameters["id"] } }
+    transaction {
+      CategoryTable.deleteWhere { CategoryTable.id eq call.parameters["id"] }
+      MovieCategories.deleteWhere { MovieCategories.category eq call.parameters["id"] }
+    }
     call.respond(HttpStatusCode.OK, "{}")
   }
   //endregion
