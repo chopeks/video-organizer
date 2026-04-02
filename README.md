@@ -1,3 +1,7 @@
+### Notice
+This project is as dead as it gets, there's however a newer, more modern version of same app that I'm periodically cooking.
+Here: https://github.com/chopeks/movie-viewer-compose
+
 ## Features
 * organize your videos by artists and categories you define
 * play videos from GUI
